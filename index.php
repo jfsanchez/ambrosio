@@ -22,46 +22,69 @@ $grupos = cargarGrupos();
 //TODO: Petición de tutorías
 //TODO: Informes individualizados de alumnos
 
+function comprobar_permiso($auxseccion) {
+    global $configuraciones;
+    $nombreConfiguracion="seccion_".$auxseccion."_login";
+    switch($configuraciones[$nombreConfiguracion]) {
+        case 'usuario':
+            if (empty($_SESSION['usuario'])){
+                header("Location: ?operacion=login");
+                $_SESSION['SECCION']=$auxseccion;
+                die();
+            }
+            break;
+        case 'admin':
+            if ($_SESSION['esadmin'] != "1"){
+                header("Location: ?operacion=login");
+                $_SESSION['SECCION']=$auxseccion;
+                die();
+            }
+            break;
+        default:
+            $_SESSION['SECCION']='';
+    }
+}
+
+//Recuperar ajustes de la operacion previa al login
+$seccion = $_REQUEST['operacion'];
+if ($seccion == "") {
+    $seccion = $_SESSION['SECCION'];
+}
 global $BREADCRUM;
+$BREADCRUM=strtoupper($seccion);
 
-switch ($_REQUEST['operacion']) {
-
+//Por seguridad
+switch ($seccion) {
     case 'login':
-    $BREADCRUM="LOGIN";
     require('includes/login.php');
     break;
 
     case 'usuarios':
-    if ($_SESSION['esadmin'] != "1"){
-        die("Acceso denegado");//mejorar
-    }
-    $BREADCRUM="USUARIOS";
+    comprobar_permiso("usuarios");
     require('includes/usuarios.php');
     break;
 
     case 'localizaciones':
+    comprobar_permiso("admin");
     require('includes/localizaciones.php');
     break;
 
     case 'incidencias':
-    if (empty($_SESSION['usuario'])){
-        die("Acceso denegado");//mejorar
-    }
-    $BREADCRUM="INCIDENCIAS";
+    comprobar_permiso("incidencias");
     require('includes/incidencias.php');
     break;
     
     case 'logout':
+    $BREADCRUM="";
     require('includes/logout.php');
     break;
 
     default:
     $BREADCRUM="CREARINCIDENCIA";
+    comprobar_permiso("crearincidencia");
     require('includes/crearincidencia.php');
 }
 
 $mysqli->close();
 
 ?>
-
-

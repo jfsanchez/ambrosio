@@ -21,7 +21,7 @@ if (empty($_SESSION['usuario'])) {
     //pinta la web de login
     require("templates/generalweb.inc.php");
 } else {
-    header("Location: ?operacion=incidencias");
+    header("Location: ?operacion=");//comportamiento por defecto en página index
     die();
 }
 
