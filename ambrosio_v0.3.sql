@@ -4,7 +4,7 @@ CREATE TABLE ordenador(
 	idordenador integer PRIMARY KEY auto_increment,
 	idlocalizacion integer references localizacion(idlocalizacion),
 	etiqueta varchar(30) not null,
-	mac varchar(15) not null,
+	mac varchar(17) not null,
 	dns varchar(250) null,
 	ip varchar(15) null,
 	procesador varchar(75),
