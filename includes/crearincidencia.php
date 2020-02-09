@@ -1,8 +1,15 @@
 <?php
     require_once("includes/incidencias.lib.php");
     require_once("includes/notificaciones.lib.php");
+    require_once("includes/ordenador.lib.php");
 
     define("PLANTILLA", "crearincidencia"); //define la plantilla a usar
+    
+    $idlocalizacion=0;
+    if ($_GET['mac'] != "") {
+        $computer=queryComputer($_GET['mac']);
+        $idlocalizacion=$computer->getIdLocalizacion();
+    }
     
     $error=false;
 

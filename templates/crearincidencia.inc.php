@@ -51,7 +51,7 @@ if ($FRACASO) {
   <select class="form-control" name="lugar" id="lugar" required='required'>
 <?php
     foreach($localizaciones as $clave => $valor){
-        if ($clave == $_POST['lugar']) {
+        if ( ($clave == $_POST['lugar']) || ($clave==$idlocalizacion) ) {
             echo "<option value=\"".$clave."\" selected=\"selected\">".$valor."</option>";
         } else {
             echo "<option value=\"".$clave."\">".$valor."</option>";
@@ -79,7 +79,13 @@ if ($FRACASO) {
 <div class="form-group row">
  <div class="col-xs-10<?php if ($ERROR['textoincidencia']) echo $ERROR_INPUT_CLASSNAME;?>">
    <label for="textoincidencia">¿Cal é o problema?</label>
-   <textarea maxlength="5000" id="textoincidencia" rows="5" class="form-control input-lg" name="textoincidencia" placeholder="Por favor, describe o problema de forma clara e concisa" required><?php echo $_POST['textoincidencia']; ?></textarea>
+   <textarea maxlength="5000" id="textoincidencia" rows="5" class="form-control input-lg" name="textoincidencia" placeholder="Por favor, describe o problema de forma clara e concisa" required>
+<?php
+   if (!empty($_GET['mac']))
+       echo "MAC del equipo (deje este texto): ".htmlentities(substr($_GET['mac'],0,17));
+   else
+       echo $_POST['textoincidencia'];
+   ?></textarea>
  </div>
 </div>
 
