@@ -285,10 +285,6 @@ class Computer {
     }
 }
 
-//TODO: Recuperar este valor de la configuracion de la BD
-if ($_REQUEST['passwd'] != "setuppassword")
-    die("403 ERROR");
-    
     switch ($_REQUEST['op2']) {
         case 's':
             //Por probar funcionamiento

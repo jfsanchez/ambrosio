@@ -19,3 +19,4 @@ CREATE TABLE ordenador(
 	fechaMontaje timestamp default now()
 );
 
+insert into configuracion(variable,valor) values('claveinventario', 'setuppassword');

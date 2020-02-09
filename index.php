@@ -76,7 +76,11 @@ switch ($seccion) {
 
     case 'webservice':
     //TODO: Cambiar clave. Mejorar esta parte
-    if ($_REQUEST['passwd'] != "setuppassword")
+    $claveinventario = $configuraciones['claveinventario'];
+    if ($claveinventario == "") {
+        $claveinventario="setuppassword";
+    }
+    if ($_REQUEST['passwd'] != $claveinventario)
 	    die("403 ERROR");
     require('includes/webservice.php');
     break;
