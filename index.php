@@ -73,7 +73,14 @@ switch ($seccion) {
     comprobar_permiso("incidencias");
     require('includes/incidencias.php');
     break;
-    
+
+    case 'webservice':
+    //TODO: Cambiar clave. Mejorar esta parte
+    if ($_REQUEST['passwd'] != "setuppassword")
+	    die("403 ERROR");
+    require('includes/webservice.php');
+    break;
+
     case 'logout':
     $BREADCRUM="";
     require('includes/logout.php');
