@@ -357,7 +357,7 @@ function RoomList() {
     $sentencia->bind_result($idlocalizacion, $nombreaula);
     
     while ($sentencia->fetch()) {
-        echo $idlocalizacion . " " . $nombreaula . " ";
+        echo $idlocalizacion . " '" . $nombreaula . "' ";
     }
     $sentencia->close();
 }
