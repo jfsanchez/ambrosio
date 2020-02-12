@@ -29,6 +29,10 @@ require_once("includes/ordenador.lib.php");
             $computer->jsonSerialize();
             break;
             
+        case 'l':
+            RoomList();
+            break;
+            
         default:
             die('400 KO');
             

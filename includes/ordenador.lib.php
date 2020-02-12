@@ -344,5 +344,21 @@ function setup($computer) {
     
     //devolver id del comentario
     echo "OK. ID: ". $GLOBALS['mysqli']->insert_id;
+    
+    $sentencia->close();
+}
+
+function RoomList() {
+    $sqlQuery="SELECT idlocalizacion, nombreaula FROM localizaciones";
+    $sentencia = $GLOBALS['mysqli']->prepare($sqlQuery);
+    
+    $sentencia->execute();
+    
+    $sentencia->bind_result($idlocalizacion, $nombreaula);
+    
+    while ($sentencia->fetch()) {
+        echo $idlocalizacion . " " . $nombreaula . " ";
+    }
+    $sentencia->close();
 }
 ?>
