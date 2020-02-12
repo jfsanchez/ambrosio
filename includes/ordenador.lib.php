@@ -16,6 +16,8 @@ class Computer {
         'etiqueta='.$this->getEtiqueta()."\n".
         'mac='. $this->getMac()."\n".
         'ip='. $this->getIp()."\n".
+        'fila='. $this->getFila()."\n".
+        'columna='. $this->getColumna()."\n".
         'dns='. $this->getDns()."\n".
         'boca='. $this->getBoca()."\n".
         'ram='. $this->getRam()."\n".
