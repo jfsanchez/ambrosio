@@ -6,16 +6,16 @@
 #CONFIG_DIR='/opt/ambrosio'
 CONFIG_DIR=$(pwd)
 CONFIG_FILE='ambrosio.conf'
-BASE_URL='https://url-del-servicio-ambrosio'
+BASE_URL='https://url.de.ambrosio'
 BASE_URL_QRCODE="${BASE_URL}/m"
-WS_PASSWD='clavedelservicioambrosio'
+WS_PASSWD='clavedeambrosio'
 INVENTORY_URL="${BASE_URL}/incidencias/?operacion=webservice&passwd=${WS_PASSWD}&op2=q&m="
 ROOMS_URL="${BASE_URL}/incidencias/?operacion=webservice&passwd=${WS_PASSWD}&op2=l"
 #Configuracion usuarios locales: invitado y administrador local
 GUEST_ACCOUNT='alumno'
 LOCAL_ADMIN_ACCOUNT='adminlocal'
 LOCAL_ADMIN_SSHKEY=$(cat ${CONFIG_DIR}/id_rsa.pub)
-HOMEDIRS="/home/NOMBREDELDOMINIO"
+HOMEDIRS="/home/NOMBRE"
 HOMEDIR_DELETE_AFTER_DAYS=180
 DEFAULT_DOMAIN="NOMBRE.DEL.DOMINIO"
 
@@ -102,43 +102,51 @@ function comprobarInstalacion() {
 }
 
 function instalar() {
-	configuraciones=$(curl ${INVENTORY_URL}${mac})
+
+	configuraciones=$(curl ${INVENTORY_URL}${mac} 2> /dev/null)
 	OLDIFS=$IFS
 	IFS=$'\n'
-	for conf in ${configuraciones}; do
+
+	#echo  ${configuraciones}
+cr='
+'
+	for conf in ${configuraciones//\\n/$cr}
+	do
+		#echo $conf
 		if [ "${conf}" == "403 ERROR" ]; then
 			echo Clave incorrecta, imposible instalar
 			IFS=$OLDIFS
 			exit;
 		else
+			#echo nombre $nombre\n valor $valor
 			nombre=$(echo $conf|awk -F '=' '{print $1}')
 			valor=$(echo $conf|awk -F '=' '{print $2}')
 			eval aux_${nombre}=\"${valor}\"
+			echo aux_${nombre} \"${valor}\"
 		fi
-	done
 
-	echo ${aux_cpu}
+	done
 
 	IFS=${OLDIFS}
 
-	echo ${datos}
+	#echo ${datos}
 
 	echo Primero obtener datos del WS
 	echo mostrar y confirmar determinados datos: fila, columna, etiqueta, dns, idlocalizacion, boca, fuentealimentacion
 	echo salir del dominio, si estaba. Cambiar DNS, hostname, /etc/hostname, /etc/hosts, variables de entorno y unir al dominio con pbis join dominio administrador
 	#--read -p "Texto: " variableTexto
 	exec 3>&1;
-	new_fila=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "POSICION DEL EQUIPO" --inputbox "Indica el número o nombre de la FILA donde esta el ordenador:" 8 40 2>&1 1>&3)
-	new_columna=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "POSICION DEL EQUIPO" --inputbox "Indica la posición en la fila donde esta el ordenador (COLUMNA):" 8 40 2>&1 1>&3)
-	new_etiqueta=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "ETIQUETA DEL EQUIPO" --inputbox "Nombre que aparece en la etiqueta\n(número de equipo):" 8 50 2>&1 1>&3)
-	new_dns=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "NOMBRE DEL EQUIPO" --inputbox "Nombre DNS completo del equipo (con el dominio):" 8 60 ${DEFAULT_DOMAIN} 2>&1 1>&3)
+	new_fila=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "POSICION DEL EQUIPO" --inputbox "Indica el número o nombre de la FILA donde esta el ordenador:" 8 40 ${aux_fila} 2>&1 1>&3)
+	new_columna=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "POSICION DEL EQUIPO" --inputbox "Indica la posición dentro de la fila (COLUMNA):" 8 40 ${aux_columna} 2>&1 1>&3)
+	new_etiqueta=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "ETIQUETA DEL EQUIPO" --inputbox "Nombre que aparece en la etiqueta\n(número de equipo):" 8 50 "${aux_etiqueta}" 2>&1 1>&3)
+	new_dns=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "NOMBRE DEL EQUIPO" --inputbox "Nombre DNS completo del equipo (con el dominio):" 8 60 "${aux_dns}" 2>&1 1>&3)
 	new_dominio=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "UNIRSE A UN DOMINIO" --inputbox "Dominio al que unirse:" 8 70 ${DEFAULT_DOMAIN} 2>&1 1>&3)
-	new_dominio_usuario=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "UNIRSE A UN DOMINIO" --inputbox "Usuario del dominio:" 8 70 2>&1 1>&3)
-	#new_dominio_clave=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "UNIRSE A UN DOMINIO" --clear --passwordbox "Clave del dominio (no se mostrará):" 8 70 2>&1 1>&3)
+	new_dominio_usuario=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "UNIRSE A UN DOMINIO" --inputbox "Usuario del dominio:" 8 70 administrador 2>&1 1>&3)
+	###new_dominio_clave=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "UNIRSE A UN DOMINIO" --clear --passwordbox "Clave del dominio (no se mostrará):" 8 70 2>&1 1>&3)
 
 	new_fecha_montaje=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "FECHA DE ENSAMBLADO O COMPRA DE PIEZAS" --calendar "Seleccione fecha de ensamblado del equipo (por garantía de piezas)" 5 80 $(date +'%d') $(date +'%m') $(date +'%Y') 2>&1 1>&3)
 	new_fecha_instalacion=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "FECHA DE INSTALACIÓN" --calendar "Fecha de instalación del equipo (debería se rhoy)" 5 80 $(date +'%d') $(date +'%m') $(date +'%Y') 2>&1 1>&3)
-	listaLocalizaciones=$(curl $ROOMS_URL 2>&1 1>&3)
+	listaLocalizaciones=$(curl $ROOMS_URL 2> /dev/null)
 	new_ubicacion=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "UBICACIÓN DEL EQUIPO" --menu "Indique en donde está el equipo" 23 80 17 ${listaLocalizaciones} 2>&1 1>&3)
 	exec 3>&-;
 	#Preguntar etiqueta y idlocalizacion
@@ -153,8 +161,9 @@ function instalar() {
 }
 
 #Saber si ha sido instalado el equipo. SI: Mirar si hay cambios en IP -> No instalado o cambio IP o procesador = regenerar imagen login
-comprobarInstalacion
+#comprobarInstalacion
 instalar
+
 if [[ ${comprobarInstalacion} == "1" ]]; then
 	echo "Deberia iniciar rutina instalacion"
 fi
