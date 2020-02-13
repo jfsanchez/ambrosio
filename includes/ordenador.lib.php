@@ -330,9 +330,8 @@ function setup($computer) {
         "procesador, ssd, hdd, ram, fila, columna, fuentealimentacion, fechaInstalacion, fechaMontaje) ".
         "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     $sentencia = $GLOBALS['mysqli']->prepare($sqlQuery);
-    $computer= new Computer; // Borrar esta linea
     
-    $sentencia->bind_param("isssssssssiiss", $computer->getIdLocalizacion, $computer->getEtiqueta, $computer->getBoca(),
+    $sentencia->bind_param("isssssssssiisss", $computer->getIdLocalizacion(), $computer->getEtiqueta(), $computer->getBoca(),
         $computer->getMac(), $computer->getDns(), $computer->getIp(), $computer->getCpu(), $computer->getSsd(),
         $computer->getHdd(), $computer->getRam(), $computer->getFila(), $computer->getColumna(), $computer->getFuentealimentacion(),
         $computer->getFechaInstalacion(), $computer->getFechaMontaje() );
