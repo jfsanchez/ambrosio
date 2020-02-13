@@ -6,7 +6,7 @@
 #CONFIG_DIR='/opt/ambrosio'
 CONFIG_DIR=$(pwd)
 CONFIG_FILE='ambrosio.conf'
-BASE_URL='https://url-del-centro'
+BASE_URL='https://url.a.ambrosio'
 BASE_URL_QRCODE="${BASE_URL}/m"
 WS_PASSWD='clavedelambrosio'
 INVENTORY_URL="${BASE_URL}/incidencias/"
@@ -106,8 +106,6 @@ function comprobarInstalacion() {
 
 function instalar() {
 
-echo curl ${INVENTORY_COMPUTER_URL}${mac}
-sleep 10
 	configuraciones=$(curl ${INVENTORY_COMPUTER_URL}${mac} 2> /dev/null)
 	OLDIFS=$IFS
 	IFS=$'\n'
@@ -171,7 +169,7 @@ cr='
 	hostname=${subdominio}
 	sed -i 's|${LOCAL_IMAGE_HOSTNAME}|${subdominio}|g' /etc/hostname
 	sed -i 's|${LOCAL_IMAGE_HOSTNAME}|${subdominio}|g' /etc/hosts
-	echo Uniendo a nuevo dominio... (por favor teclee la clave del usuario que ha indicado cuando se le pida)
+	echo Uniendo a nuevo dominio... Por favor, teclee la clave del usuario que ha indicado cuando se le pida.
 	/usr/bin/pbis join ${new_dominio} ${new_dominio_usuario}
 
 }
