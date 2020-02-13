@@ -6,19 +6,20 @@
 #CONFIG_DIR='/opt/ambrosio'
 CONFIG_DIR=$(pwd)
 CONFIG_FILE='ambrosio.conf'
-BASE_URL='https://url.de.ambrosio'
+BASE_URL='https://url.del.centro'
 BASE_URL_QRCODE="${BASE_URL}/m"
 WS_PASSWD='clavedeambrosio'
 INVENTORY_URL="${BASE_URL}/incidencias/?operacion=webservice&passwd=${WS_PASSWD}&op2=q&m="
+INVENTORY_REGISTER_URL="${BASE_URL}/incidencias/"
 ROOMS_URL="${BASE_URL}/incidencias/?operacion=webservice&passwd=${WS_PASSWD}&op2=l"
 #Configuracion usuarios locales: invitado y administrador local
 GUEST_ACCOUNT='alumno'
 LOCAL_ADMIN_ACCOUNT='adminlocal'
 LOCAL_ADMIN_SSHKEY=$(cat ${CONFIG_DIR}/id_rsa.pub)
-HOMEDIRS="/home/NOMBRE"
+HOMEDIRS="/home/DOMINIO"
 HOMEDIR_DELETE_AFTER_DAYS=180
-DEFAULT_DOMAIN="NOMBRE.DEL.DOMINIO"
-
+DEFAULT_DOMAIN="DOMINIO.loquesea.local"
+DEFAULT_BACKTITLE="Ambrosio (c) 2020. jfsanchez.es"
 
 mac=$(ip address|grep link/ether|awk '{print $2}')
 ip=$(ip addr|grep "inet "|grep -v '127.0.0.1'|awk '{print $2}'|awk -F '/' '{print $1}')
@@ -91,11 +92,10 @@ function generarFondoLogin() {
 function comprobarInstalacion() {
 	comprobarInstalacion=0
 	if [ -f "${CONFIG_DIR}/${CONFIG_FILE}" ]; then
-		if [[ "${mac}" == $(cat ${CONFIG_DIR}/${CONFIG_FILE}) ]]; then
+		if [[ "${mac}" != $(cat ${CONFIG_DIR}/${CONFIG_FILE}) ]]; then
 			comprobarInstalacion=1
 		fi
 	else
-		echo Instalando por primera vez...
 		mkdir -p ${CONFIG_DIR}
 		comprobarInstalacion=1
 	fi
@@ -131,44 +131,73 @@ cr='
 
 	#echo ${datos}
 
-	echo Primero obtener datos del WS
-	echo mostrar y confirmar determinados datos: fila, columna, etiqueta, dns, idlocalizacion, boca, fuentealimentacion
-	echo salir del dominio, si estaba. Cambiar DNS, hostname, /etc/hostname, /etc/hosts, variables de entorno y unir al dominio con pbis join dominio administrador
 	#--read -p "Texto: " variableTexto
 	exec 3>&1;
-	new_fila=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "POSICION DEL EQUIPO" --inputbox "Indica el número o nombre de la FILA donde esta el ordenador:" 8 40 ${aux_fila} 2>&1 1>&3)
-	new_columna=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "POSICION DEL EQUIPO" --inputbox "Indica la posición dentro de la fila (COLUMNA):" 8 40 ${aux_columna} 2>&1 1>&3)
-	new_etiqueta=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "ETIQUETA DEL EQUIPO" --inputbox "Nombre que aparece en la etiqueta\n(número de equipo):" 8 50 "${aux_etiqueta}" 2>&1 1>&3)
-	new_dns=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "NOMBRE DEL EQUIPO" --inputbox "Nombre DNS completo del equipo (con el dominio):" 8 60 "${aux_dns}" 2>&1 1>&3)
-	new_dominio=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "UNIRSE A UN DOMINIO" --inputbox "Dominio al que unirse:" 8 70 ${DEFAULT_DOMAIN} 2>&1 1>&3)
-	new_dominio_usuario=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "UNIRSE A UN DOMINIO" --inputbox "Usuario del dominio:" 8 70 administrador 2>&1 1>&3)
-	###new_dominio_clave=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "UNIRSE A UN DOMINIO" --clear --passwordbox "Clave del dominio (no se mostrará):" 8 70 2>&1 1>&3)
+	new_fila=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "POSICION DEL EQUIPO" --inputbox "Indica el número o nombre de la FILA donde esta el ordenador:" 8 40 ${aux_fila} 2>&1 1>&3)
+	new_columna=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "POSICION DEL EQUIPO" --inputbox "Indica la posición dentro de la fila (COLUMNA):" 8 40 ${aux_columna} 2>&1 1>&3)
+	new_etiqueta=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "ETIQUETA DEL EQUIPO" --inputbox "Nombre que aparece en la etiqueta\n(número de equipo):" 8 50 "${aux_etiqueta}" 2>&1 1>&3)
+	new_dns=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "NOMBRE DEL EQUIPO" --inputbox "Nombre DNS completo del equipo (con el dominio):" 8 60 "${aux_dns}" 2>&1 1>&3)
+	new_dominio=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "UNIRSE A UN DOMINIO" --inputbox "Dominio al que unirse:" 8 70 ${DEFAULT_DOMAIN} 2>&1 1>&3)
+	new_dominio_usuario=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "UNIRSE A UN DOMINIO" --inputbox "Usuario del dominio:" 8 70 administrador 2>&1 1>&3)
+	new_boca=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "BOCA DE RED" --inputbox "Indica el nombre de la boca de red a donde va conectado:" 8 40 ${aux_boca} 2>&1 1>&3)
+	new_fuentealimentacion=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "Fuente de alimentación" --inputbox "Indica la marca y potencia (u otros datos relevantes) de la fuente de alimentacion:" 8 40 ${aux_fuentealimentacion} 2>&1 1>&3)
+	###new_dominio_clave=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "UNIRSE A UN DOMINIO" --clear --passwordbox "Clave del dominio (no se mostrará):" 8 70 2>&1 1>&3)
 
-	new_fecha_montaje=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "FECHA DE ENSAMBLADO O COMPRA DE PIEZAS" --calendar "Seleccione fecha de ensamblado del equipo (por garantía de piezas)" 5 80 $(date +'%d') $(date +'%m') $(date +'%Y') 2>&1 1>&3)
-	new_fecha_instalacion=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "FECHA DE INSTALACIÓN" --calendar "Fecha de instalación del equipo (debería se rhoy)" 5 80 $(date +'%d') $(date +'%m') $(date +'%Y') 2>&1 1>&3)
+	new_fecha_montaje=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "FECHA DE ENSAMBLADO O COMPRA DE PIEZAS" --calendar "Seleccione fecha de ensamblado del equipo (por garantía de piezas)" 5 80 $(date +'%d') $(date +'%m') $(date +'%Y') 2>&1 1>&3)
+	new_fecha_instalacion=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "FECHA DE INSTALACIÓN" --calendar "Fecha de instalación del equipo (debería se rhoy)" 5 80 $(date +'%d') $(date +'%m') $(date +'%Y') 2>&1 1>&3)
 	listaLocalizaciones=$(curl $ROOMS_URL 2> /dev/null)
-	new_ubicacion=$(dialog --backtitle "Ambrosio (c) 2020. jfsanchez.es" --title "UBICACIÓN DEL EQUIPO" --menu "Indique en donde está el equipo" 23 80 17 ${listaLocalizaciones} 2>&1 1>&3)
+	new_ubicacion=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "UBICACIÓN DEL EQUIPO" --menu "Indique en donde está el equipo" 23 80 17 ${listaLocalizaciones} 2>&1 1>&3)
 	exec 3>&-;
-	#Preguntar etiqueta y idlocalizacion
 
-	#if [ $instalar == "1" ]; then
-	#	echo "Debo instalarme"
-	#fi
-	#¿El equipo está inventariado? Si: sacar datos etiqueta e idlocalizacion. No: pedir por pantalla
+	subdominio=$(echo ${new_dns}|awk -F '.' '{print $1}')
+	echo Enviando datos de instalación a servicio web...
+	#Ajustar fechas
+	new_fecha_montaje=$(echo ${new_fecha_montaje}|awk -F '/' '{printf("%s/%s/%s", $3, $2, $1)}')
+	new_fecha_instalacion=$(echo ${new_fecha_instalacion}|awk -F '/' '{printf("%s/%s/%s", $3, $2, $1)}')
+	fechamontaje_procesada=$(echo ${new_fecha_montaje} 00:00:00|tr / -)
+	fechainstalacion_procesada=$(echo ${new_fecha_instalacion} 00:00:00|tr / -)
 
-	#generarFondoLogin
+	curl -G -v ${INVENTORY_REGISTER_URL} --data-urlencode "operacion=webservice" --data-urlencode "passwd=${WS_PASSWD}" --data-urlencode "op2=s" --data-urlencode "idlocalizacion=${new_ubicacion}" --data-urlencode "etiqueta=${new_etiqueta}" --data-urlencode "mac=${mac}" --data-urlencode "ip=${ip}" --data-urlencode "dns=${new_dns}" --data-urlencode "boca=${new_boca}" --data-urlencode "ram=${memoria}" --data-urlencode "ssd=${ssd}" --data-urlencode "hdd=${hdd}" --data-urlencode "cpu=${cpu}" --data-urlencode "fila=${new_fila}" --data-urlencode "columna=${new_columna}" --data-urlencode "fuentealimentacion=${new_fuentealimentacion}" --data-urlencode "fechainstalacion=${fechainstalacion_procesada}" --data-urlencode "fechamontaje=${fechamontaje_procesada}"
+
+	#echo Dejando el dominio anterior...
+	#/usr/bin/pbis leave
+	#echo Ajustando hostname del PC a: ${subdominio}
+	#hostname ${subdominio}
+	#hostname=${subdominio}
+	#sed -i 's|pcubuntuZ|${subdominio}|g' /etc/hostname
+	#sed -i 's|pcubuntuZ|${subdominio}|g' /etc/hosts
+	#echo Uniendo a nuevo dominio... (por favor teclee la clave del usuario que ha indicado cuando se le pida)
+	#/usr/bin/pbis join ${new_dominio} ${new_dominio_usuario}
+
 
 }
+case "$1" in
+	generarPantallaLogin)
+		generarFondoLogin
+	;;
 
-#Saber si ha sido instalado el equipo. SI: Mirar si hay cambios en IP -> No instalado o cambio IP o procesador = regenerar imagen login
-#comprobarInstalacion
-instalar
+	resetAdminAccount)
+		resetLocalAdminAccount
+	;;
 
-if [[ ${comprobarInstalacion} == "1" ]]; then
-	echo "Deberia iniciar rutina instalacion"
-fi
-#resetLocalAdminAccount
-#resetGuestAccount
+	initGuestAccount)
+		resetGuestAccount
+	;;
 
-echo MAC: ${mac} IP: ${ip} CPU: ${cpu} RAM: ${memoria} GB HDD: ${hdd} SSD: ${ssd}
+	*)
+		echo Información del equipo: MAC: ${mac} IP: ${ip} CPU: ${cpu} RAM: ${memoria} GB HDD: ${hdd} SSD: ${ssd}
+		#Saber si ha sido instalado el equipo. SI: Mirar si hay cambios en MAC -> No instalado = regenerar imagen login
+		comprobarInstalacion
+		if [[ ${comprobarInstalacion} == "1" ]]; then
+			echo Generando pantalla de login...
+			generarFondoLogin
+			echo Instalando y registrando...
+			instalar
+			echo ${mac} > ${CONFIG_DIR}/${CONFIG_FILE}
+		fi
+
+esac
+
+exit 0
+
 
