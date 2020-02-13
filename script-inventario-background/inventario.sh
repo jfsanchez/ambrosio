@@ -6,7 +6,7 @@
 #CONFIG_DIR='/opt/ambrosio'
 CONFIG_DIR=$(pwd)
 CONFIG_FILE='ambrosio.conf'
-BASE_URL='https://url.del.centro'
+BASE_URL='https://url-del-centro'
 BASE_URL_QRCODE="${BASE_URL}/m"
 WS_PASSWD='clavedelambrosio'
 INVENTORY_URL="${BASE_URL}/incidencias/"
@@ -20,7 +20,7 @@ LOCAL_IMAGE_HOSTNAME="pcubuntuZ"
 LOCAL_ADMIN_SSHKEY=$(cat ${CONFIG_DIR}/id_rsa.pub)
 HOMEDIRS="/home/INFORMATICA"
 HOMEDIR_DELETE_AFTER_DAYS=180
-DEFAULT_DOMAIN="INFORMATICA.centro.local"
+DEFAULT_DOMAIN="INFORMATICA.dominio.tld"
 DEFAULT_BACKTITLE="Ambrosio (c) 2020. jfsanchez.es"
 INIT_URL="${BASE_URL}/intranet/?m="
 
@@ -106,7 +106,8 @@ function comprobarInstalacion() {
 
 function instalar() {
 
-
+echo curl ${INVENTORY_COMPUTER_URL}${mac}
+sleep 10
 	configuraciones=$(curl ${INVENTORY_COMPUTER_URL}${mac} 2> /dev/null)
 	OLDIFS=$IFS
 	IFS=$'\n'
@@ -164,15 +165,14 @@ cr='
 	curl -G ${INVENTORY_URL} --data-urlencode "operacion=webservice" --data-urlencode "passwd=${WS_PASSWD}" --data-urlencode "op2=s" --data-urlencode "idlocalizacion=${new_ubicacion}" --data-urlencode "etiqueta=${new_etiqueta}" --data-urlencode "mac=${mac}" --data-urlencode "ip=${ip}" --data-urlencode "dns=${new_dns}" --data-urlencode "boca=${new_boca}" --data-urlencode "ram=${memoria}" --data-urlencode "ssd=${ssd}" --data-urlencode "hdd=${hdd}" --data-urlencode "cpu=${cpu}" --data-urlencode "fila=${new_fila}" --data-urlencode "columna=${new_columna}" --data-urlencode "fuentealimentacion=${new_fuentealimentacion}" --data-urlencode "fechainstalacion=${fechainstalacion_procesada}" --data-urlencode "fechamontaje=${fechamontaje_procesada}"
 
 	#echo Dejando el dominio anterior...
-	#/usr/bin/pbis leave
-	#echo Ajustando hostname del PC a: ${subdominio}
-	#hostname ${subdominio}
-	#hostname=${subdominio}
-	#sed -i 's|${LOCAL_IMAGE_HOSTNAME}|${subdominio}|g' /etc/hostname
-	#sed -i 's|${LOCAL_IMAGE_HOSTNAME}|${subdominio}|g' /etc/hosts
-	#echo Uniendo a nuevo dominio... (por favor teclee la clave del usuario que ha indicado cuando se le pida)
-	#/usr/bin/pbis join ${new_dominio} ${new_dominio_usuario}
-
+	/usr/bin/pbis leave
+	echo Ajustando hostname del PC a: ${subdominio}
+	hostname ${subdominio}
+	hostname=${subdominio}
+	sed -i 's|${LOCAL_IMAGE_HOSTNAME}|${subdominio}|g' /etc/hostname
+	sed -i 's|${LOCAL_IMAGE_HOSTNAME}|${subdominio}|g' /etc/hosts
+	echo Uniendo a nuevo dominio... (por favor teclee la clave del usuario que ha indicado cuando se le pida)
+	/usr/bin/pbis join ${new_dominio} ${new_dominio_usuario}
 
 }
 case "$1" in
