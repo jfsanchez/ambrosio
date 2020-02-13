@@ -8,18 +8,21 @@ CONFIG_DIR=$(pwd)
 CONFIG_FILE='ambrosio.conf'
 BASE_URL='https://url.del.centro'
 BASE_URL_QRCODE="${BASE_URL}/m"
-WS_PASSWD='clavedeambrosio'
-INVENTORY_URL="${BASE_URL}/incidencias/?operacion=webservice&passwd=${WS_PASSWD}&op2=q&m="
-INVENTORY_REGISTER_URL="${BASE_URL}/incidencias/"
-ROOMS_URL="${BASE_URL}/incidencias/?operacion=webservice&passwd=${WS_PASSWD}&op2=l"
+WS_PASSWD='clavedelambrosio'
+INVENTORY_URL="${BASE_URL}/incidencias/"
+INVENTORY_PASSWORD_URL="${INVENTORY_URL}?operacion=webservice&passwd=${WS_PASSWD}"
+INVENTORY_COMPUTER_URL="${INVENTORY_PASSWORD_URL}&op2=q&m="
+ROOMS_URL="${INVENTORY_PASSWORD_URL}&op2=l"
 #Configuracion usuarios locales: invitado y administrador local
 GUEST_ACCOUNT='alumno'
 LOCAL_ADMIN_ACCOUNT='adminlocal'
+LOCAL_IMAGE_HOSTNAME="pcubuntuZ"
 LOCAL_ADMIN_SSHKEY=$(cat ${CONFIG_DIR}/id_rsa.pub)
-HOMEDIRS="/home/DOMINIO"
+HOMEDIRS="/home/INFORMATICA"
 HOMEDIR_DELETE_AFTER_DAYS=180
-DEFAULT_DOMAIN="DOMINIO.loquesea.local"
+DEFAULT_DOMAIN="INFORMATICA.centro.local"
 DEFAULT_BACKTITLE="Ambrosio (c) 2020. jfsanchez.es"
+INIT_URL="${BASE_URL}/intranet/?m="
 
 mac=$(ip address|grep link/ether|awk '{print $2}')
 ip=$(ip addr|grep "inet "|grep -v '127.0.0.1'|awk '{print $2}'|awk -F '/' '{print $1}')
@@ -103,7 +106,8 @@ function comprobarInstalacion() {
 
 function instalar() {
 
-	configuraciones=$(curl ${INVENTORY_URL}${mac} 2> /dev/null)
+
+	configuraciones=$(curl ${INVENTORY_COMPUTER_URL}${mac} 2> /dev/null)
 	OLDIFS=$IFS
 	IFS=$'\n'
 
@@ -157,15 +161,15 @@ cr='
 	fechamontaje_procesada=$(echo ${new_fecha_montaje} 00:00:00|tr / -)
 	fechainstalacion_procesada=$(echo ${new_fecha_instalacion} 00:00:00|tr / -)
 
-	curl -G -v ${INVENTORY_REGISTER_URL} --data-urlencode "operacion=webservice" --data-urlencode "passwd=${WS_PASSWD}" --data-urlencode "op2=s" --data-urlencode "idlocalizacion=${new_ubicacion}" --data-urlencode "etiqueta=${new_etiqueta}" --data-urlencode "mac=${mac}" --data-urlencode "ip=${ip}" --data-urlencode "dns=${new_dns}" --data-urlencode "boca=${new_boca}" --data-urlencode "ram=${memoria}" --data-urlencode "ssd=${ssd}" --data-urlencode "hdd=${hdd}" --data-urlencode "cpu=${cpu}" --data-urlencode "fila=${new_fila}" --data-urlencode "columna=${new_columna}" --data-urlencode "fuentealimentacion=${new_fuentealimentacion}" --data-urlencode "fechainstalacion=${fechainstalacion_procesada}" --data-urlencode "fechamontaje=${fechamontaje_procesada}"
+	curl -G ${INVENTORY_URL} --data-urlencode "operacion=webservice" --data-urlencode "passwd=${WS_PASSWD}" --data-urlencode "op2=s" --data-urlencode "idlocalizacion=${new_ubicacion}" --data-urlencode "etiqueta=${new_etiqueta}" --data-urlencode "mac=${mac}" --data-urlencode "ip=${ip}" --data-urlencode "dns=${new_dns}" --data-urlencode "boca=${new_boca}" --data-urlencode "ram=${memoria}" --data-urlencode "ssd=${ssd}" --data-urlencode "hdd=${hdd}" --data-urlencode "cpu=${cpu}" --data-urlencode "fila=${new_fila}" --data-urlencode "columna=${new_columna}" --data-urlencode "fuentealimentacion=${new_fuentealimentacion}" --data-urlencode "fechainstalacion=${fechainstalacion_procesada}" --data-urlencode "fechamontaje=${fechamontaje_procesada}"
 
 	#echo Dejando el dominio anterior...
 	#/usr/bin/pbis leave
 	#echo Ajustando hostname del PC a: ${subdominio}
 	#hostname ${subdominio}
 	#hostname=${subdominio}
-	#sed -i 's|pcubuntuZ|${subdominio}|g' /etc/hostname
-	#sed -i 's|pcubuntuZ|${subdominio}|g' /etc/hosts
+	#sed -i 's|${LOCAL_IMAGE_HOSTNAME}|${subdominio}|g' /etc/hostname
+	#sed -i 's|${LOCAL_IMAGE_HOSTNAME}|${subdominio}|g' /etc/hosts
 	#echo Uniendo a nuevo dominio... (por favor teclee la clave del usuario que ha indicado cuando se le pida)
 	#/usr/bin/pbis join ${new_dominio} ${new_dominio_usuario}
 
@@ -182,6 +186,9 @@ case "$1" in
 
 	initGuestAccount)
 		resetGuestAccount
+	;;
+	initMessage)
+		xdg-open ${INIT_URL}${mac} &
 	;;
 
 	*)
