@@ -3,12 +3,12 @@
 # Script de inventario, inicialización, mantenimiento y configuración post-instalación
 # Jose Sanchez. 2020. http://jfsanchez.es
 #
-#CONFIG_DIR='/opt/ambrosio'
-CONFIG_DIR=$(pwd)
+CONFIG_DIR='/opt/ambrosio'
+#CONFIG_DIR=$(pwd)
 CONFIG_FILE='ambrosio.conf'
-BASE_URL='https://url.a.ambrosio'
+BASE_URL='https://ies.local'
 BASE_URL_QRCODE="${BASE_URL}/m"
-WS_PASSWD='clavedelambrosio'
+WS_PASSWD='clavedeambrosio'
 INVENTORY_URL="${BASE_URL}/incidencias/"
 INVENTORY_PASSWORD_URL="${INVENTORY_URL}?operacion=webservice&passwd=${WS_PASSWD}"
 INVENTORY_COMPUTER_URL="${INVENTORY_PASSWORD_URL}&op2=q&m="
@@ -16,15 +16,17 @@ ROOMS_URL="${INVENTORY_PASSWORD_URL}&op2=l"
 #Configuracion usuarios locales: invitado y administrador local
 GUEST_ACCOUNT='alumno'
 LOCAL_ADMIN_ACCOUNT='adminlocal'
-LOCAL_IMAGE_HOSTNAME="pcubuntuZ"
+LOCAL_IMAGE_HOSTNAME="maqueta"
 LOCAL_ADMIN_SSHKEY=$(cat ${CONFIG_DIR}/id_rsa.pub)
 HOMEDIRS="/home/INFORMATICA"
 HOMEDIR_DELETE_AFTER_DAYS=180
-DEFAULT_DOMAIN="INFORMATICA.dominio.tld"
+DEFAULT_DOMAIN="INFORMATICA.ies.local"
 DEFAULT_BACKTITLE="Ambrosio (c) 2020. jfsanchez.es"
 INIT_URL="${BASE_URL}/intranet/?m="
 
 mac=$(ip address|grep link/ether|awk '{print $2}')
+#Only first mac
+mac=${mac:0:17}
 ip=$(ip addr|grep "inet "|grep -v '127.0.0.1'|awk '{print $2}'|awk -F '/' '{print $1}')
 
 #CPU from screenfetch
@@ -35,7 +37,7 @@ memoria=$(free -m|grep Mem|awk '{print $2}')
 
 hdd=''
 ssd=''
-for auxdisco in $(lsblk -d -o name|tail -n +2); do
+for auxdisco in $(lsblk -d -o name|grep -v sr0|tail -n +2); do
 	discoconcreto=$(lsblk -d -o name,rota,size|grep ${auxdisco})
 	#nombredisco=$(awk 'BEGIN{split(ARGV[1],var," ");print var[1]}' ${discoconcreto})
 	eshdd=$(awk 'BEGIN{split(ARGV[2],var," ");print var[1]}' ${discoconcreto})
@@ -79,11 +81,11 @@ function generarFondoLogin() {
 	fi
 
 	rm -f ${CONFIG_DIR}/fondo-login-texto-1920x1080-qr.jpg
-	convert -font Ubuntu -pointsize 70 -fill white -draw "text 280,2305 '${nombrehost}. MAC: ${mac:0:17}' " -draw "text 280,2400 '${cpu}. RAM: ${memoria} MiB. ${textoDiscos} '" ${CONFIG_DIR}/fondo-login.png ${CONFIG_DIR}/fondo-login-texto.png
+	convert -font Ubuntu -pointsize 70 -fill white -draw "text 280,2305 '${nombrehost}. MAC: ${mac}' " -draw "text 280,2400 '${cpu}. RAM: ${memoria} MiB. ${textoDiscos} '" ${CONFIG_DIR}/fondo-login.png ${CONFIG_DIR}/fondo-login-texto.png
 	convert ${CONFIG_DIR}/fondo-login-texto.png -resize 1920x1080 -background "#3e534c" -gravity center -extent 1920x1080 ${CONFIG_DIR}/fondo-login-texto-1920x1080.png
 	rm -f ${CONFIG_DIR}/fondo-login-texto.png
 	#Añadir código qr para incidencias
-	qrencode -s 4 -l H -o ${CONFIG_DIR}/qrcode.png "${BASE_URL_QRCODE}/${mac:0:17}"
+	qrencode -s 4 -l H -o ${CONFIG_DIR}/qrcode.png "${BASE_URL_QRCODE}/${mac}"
 	convert ${CONFIG_DIR}/qrcode.png -resize 330x200 -background "#3e534c" -gravity northeast -extent 330x200 ${CONFIG_DIR}/qrcode-resized.png
 	rm -f ${CONFIG_DIR}/qrcode.png
 	convert ${CONFIG_DIR}/fondo-login-texto-1920x1080.png ${CONFIG_DIR}/qrcode-resized.png -gravity west -composite -matte ${CONFIG_DIR}/fondo-login-texto-1920x1080-qr.jpg
@@ -143,7 +145,7 @@ cr='
 	new_dominio=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "UNIRSE A UN DOMINIO" --inputbox "Dominio al que unirse:" 8 70 ${DEFAULT_DOMAIN} 2>&1 1>&3)
 	new_dominio_usuario=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "UNIRSE A UN DOMINIO" --inputbox "Usuario del dominio:" 8 70 administrador 2>&1 1>&3)
 	new_boca=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "BOCA DE RED" --inputbox "Indica el nombre de la boca de red a donde va conectado:" 8 40 ${aux_boca} 2>&1 1>&3)
-	new_fuentealimentacion=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "Fuente de alimentación" --inputbox "Indica la marca y potencia (u otros datos relevantes) de la fuente de alimentacion:" 8 40 ${aux_fuentealimentacion} 2>&1 1>&3)
+	new_fuentealimentacion=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "Fuente de alimentación" --inputbox "Indica la marca y potencia (u otros datos relevantes) de la fuente de alimentacion:" 8 40 "${aux_fuentealimentacion}" 2>&1 1>&3)
 	###new_dominio_clave=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "UNIRSE A UN DOMINIO" --clear --passwordbox "Clave del dominio (no se mostrará):" 8 70 2>&1 1>&3)
 
 	new_fecha_montaje=$(dialog --backtitle "${DEFAULT_BACKTITLE}" --title "FECHA DE ENSAMBLADO O COMPRA DE PIEZAS" --calendar "Seleccione fecha de ensamblado del equipo (por garantía de piezas)" 5 80 $(date +'%d') $(date +'%m') $(date +'%Y') 2>&1 1>&3)
@@ -185,8 +187,14 @@ case "$1" in
 	initGuestAccount)
 		resetGuestAccount
 	;;
+
 	initMessage)
-		xdg-open ${INIT_URL}${mac} &
+		if [[ "${USER}" == "${LOCAL_ADMIN_ACCOUNT}" ]]; then
+			#echo "Inicialización del equipo, teclee su clave de sudo para ejecutar este script como administrador"
+			pathcompleto=$(realpath $0)
+			xterm -hold -e "sudo ${pathcompleto}" &
+		fi
+		xdg-open $(echo ${INIT_URL}${mac}"\&u=${USER}") &
 	;;
 
 	*)
