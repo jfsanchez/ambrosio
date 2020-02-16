@@ -18,8 +18,12 @@ if ($_POST['operacion2'] == "1") {
     }
 }
 
-if (empty($_SESSION['usuario'])) {
+if ($_SESSION['sesionreal'] != true) {
     //pinta la web de login
+    $aux_usuario=htmlentities($_POST['usuario']);
+    if ($aux_usuario == "") {
+        $aux_usuario=$_SESSION['usuario'];
+    }
     require("templates/generalweb.inc.php");
 } else {
     header("Location: ?operacion=");//comportamiento por defecto en página index

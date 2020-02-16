@@ -16,7 +16,7 @@ if ($FRACASO) {
 
 <div class="form-group row">
   <label for="usuario">Usuario:</label>
-  <input class="form-control" type="text" value="<?php echo $_POST['usuario']; ?>" 
+  <input class="form-control" type="text" value="<?php echo $aux_usuario; ?>" 
   		name="usuario" id="usuario" placeholder="Nome de usuario" required autofocus/>
 
     <label for="clave">Contrasinal:</label>
