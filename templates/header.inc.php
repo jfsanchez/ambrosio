@@ -54,7 +54,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
       <?php
-      if ($_SESSION['sesionreal'] == true) {
+      if ($_SESSION['sesionreal'] != true) {
           echo "<li";
           if ($BREADCRUM == "LOGIN")
               echo " class=\"active\"";
