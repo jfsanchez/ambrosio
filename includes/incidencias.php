@@ -36,9 +36,13 @@ if (empty($cabecera_activa)) {
     $cabecera_activa=$_SESSION['grupos'][0];
 }
 
+$acceso=false;
 foreach ($_SESSION['grupos'] as $auxgrupo){
     $auxcabecera = new CabeceraIncidencia();
     $auxcabecera->idgrupo=$auxgrupo;
+    if ($auxgrupo == $cabecera_activa){
+        $acceso=true;
+    }
     $auxcabecera->grupo=$GLOBALS['grupos'][$auxgrupo];
     //Cargar de una sola consulta todos los contadores
     $estadisticas=contarNuevasIncidencias(1);//1= estado nuevo
@@ -54,12 +58,14 @@ $idestado=$_REQUEST['idestado'];
 if (empty($idestado)){
     $idestado=1;
 }
-    
-//Cargar las incidencias de la cabecera activa
-$incidencias=buscarIncidencias($cabecera_activa, $idestado);
-//Cargar los comentarios de las incidencias
-foreach ($incidencias as $incidencia){
-    $comentarios[]=buscarComentarios($incidencia->idincidencia);
+
+if ($acceso == true) {
+    //Cargar las incidencias de la cabecera activa
+    $incidencias=buscarIncidencias($cabecera_activa, $idestado);
+    //Cargar los comentarios de las incidencias
+    foreach ($incidencias as $incidencia){
+        $comentarios[]=buscarComentarios($incidencia->idincidencia);
+    }
 }
 
 require("templates/generalweb.inc.php");
