@@ -34,7 +34,7 @@
       <ul class="nav navbar-nav">
         <li<?php if ($BREADCRUM == "CREARINCIDENCIA") echo " class=\"active\""; ?>><a id="nuevaincidencia" data-toggle="tooltip" title="Enviar nova incidencia" href="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])."?operacion=crearincidencia";?>"><span class="glyphicon glyphicon-plus"></span> Nova incidencia</a></li>
       <?php
-      if (!empty($_SESSION['usuario'])) {
+      if ($_SESSION['sesionreal'] == true) {
         echo "<li";
         if ($BREADCRUM == "INCIDENCIAS") {
             echo " class=\"active\"";
@@ -54,7 +54,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
       <?php
-      if (empty($_SESSION['usuario'])) {
+      if ($_SESSION['sesionreal'] == true) {
           echo "<li";
           if ($BREADCRUM == "LOGIN")
               echo " class=\"active\"";

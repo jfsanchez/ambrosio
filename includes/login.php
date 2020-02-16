@@ -14,6 +14,7 @@ if ($_POST['operacion2'] == "1") {
         $_SESSION['idusuario'] = $usuario->idusuario;
         $_SESSION['grupos'] = $usuario->grupos;
         $_SESSION['esadmin'] = $usuario->esadmin;
+        $_SESSION['sesionreal'] = true;
     }
 }
 
