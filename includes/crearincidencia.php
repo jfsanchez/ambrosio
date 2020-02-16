@@ -6,8 +6,12 @@
     define("PLANTILLA", "crearincidencia"); //define la plantilla a usar
     
     $idlocalizacion=0;
-    if ($_GET['mac'] != "") {
-        $computer=queryComputer($_GET['mac']);
+    if ( ($_GET['mac'] != "") || ($_SESSION['mac'] != "") ) {
+        $auxmac=$_GET['mac'];
+        if ($auxmac == "") {
+            $auxmac=$_SESSION['mac'];
+        }
+        $computer=queryComputer($auxmac);
         $idlocalizacion=$computer->getIdLocalizacion();
     }
     
