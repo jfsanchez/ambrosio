@@ -28,7 +28,7 @@ if ($FRACASO) {
 <div class="form-group row">
  <div class="col-xs-4<?php if ($ERROR['nombre']) echo $ERROR_INPUT_CLASSNAME;?>">
   <label for="nombre">Eu son:</label>
-  <input class="form-control" type="text" value="<?php if (empty($_POST['operacion2']) && !empty($_SESSION['usuario'])) echo $_SESSION['usuario']; else echo $_POST['nombre']; ?>" name="nombre" id="nombre" placeholder="Nome e apelidos" required autofocus/>
+  <input class="form-control" type="text" value="<?php if (empty($_POST['operacion2']) && !empty($_SESSION['usuario'])) echo $_SESSION['usuario']; else echo $_POST['nombre']; ?>" name="nombre" id="nombre" placeholder="Nome e apelidos" required autofocus<?php if ($_SESSION['usuario'] != "") { echo " readonly"; } ?> />
  </div>
 
  <div class="col-xs-4<?php if ($ERROR['email']) echo $ERROR_INPUT_CLASSNAME;?>">
@@ -81,8 +81,8 @@ if ($FRACASO) {
    <label for="textoincidencia">¿Cal é o problema?</label>
    <textarea maxlength="5000" id="textoincidencia" rows="5" class="form-control input-lg" name="textoincidencia" placeholder="Por favor, describe o problema de forma clara e concisa" required>
 <?php
-   if (!empty($_GET['mac']))
-       echo "MAC del equipo (deje este texto): ".htmlentities(substr($_GET['mac'],0,17));
+   if (!empty($auxmac))
+       echo "MAC del equipo (deje este texto): ".htmlentities(substr($auxmac,0,17));
    else
        echo $_POST['textoincidencia'];
    ?></textarea>
