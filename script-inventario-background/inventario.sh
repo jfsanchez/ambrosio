@@ -8,7 +8,7 @@ CONFIG_DIR='/opt/ambrosio'
 CONFIG_FILE='ambrosio.conf'
 BASE_URL='https://ies.local'
 BASE_URL_QRCODE="${BASE_URL}/m"
-WS_PASSWD='clavedeambrosio'
+WS_PASSWD='claveambrosio'
 INVENTORY_URL="${BASE_URL}/incidencias/"
 INVENTORY_PASSWORD_URL="${INVENTORY_URL}?operacion=webservice&passwd=${WS_PASSWD}"
 INVENTORY_COMPUTER_URL="${INVENTORY_PASSWORD_URL}&op2=q&m="
@@ -169,8 +169,8 @@ cr='
 	echo Ajustando hostname del PC a: ${subdominio}
 	hostname ${subdominio}
 	hostname=${subdominio}
-	sed -i 's|${LOCAL_IMAGE_HOSTNAME}|${subdominio}|g' /etc/hostname
-	sed -i 's|${LOCAL_IMAGE_HOSTNAME}|${subdominio}|g' /etc/hosts
+	sed -i "s|${LOCAL_IMAGE_HOSTNAME}|${subdominio}|g" /etc/hostname
+	sed -i "s|${LOCAL_IMAGE_HOSTNAME}|${subdominio}|g" /etc/hosts
 	echo Uniendo a nuevo dominio... Por favor, teclee la clave del usuario que ha indicado cuando se le pida.
 	/usr/bin/pbis join ${new_dominio} ${new_dominio_usuario}
 
@@ -194,7 +194,7 @@ case "$1" in
 			pathcompleto=$(realpath $0)
 			xterm -hold -e "sudo ${pathcompleto}" &
 		fi
-		xdg-open $(echo ${INIT_URL}${mac}"\&u=${USER}") &
+		xdg-open $(echo ${INIT_URL}${mac}"&u=${USER}") &
 	;;
 
 	*)
