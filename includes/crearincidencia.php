@@ -13,6 +13,7 @@
         }
         $computer=queryComputer($auxmac);
         $idlocalizacion=$computer->getIdLocalizacion();
+        $etiqueta_equipo=$computer->getEtiqueta();
     }
     
     $error=false;
