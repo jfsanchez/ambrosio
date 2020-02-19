@@ -82,7 +82,7 @@ if ($FRACASO) {
    <textarea maxlength="5000" id="textoincidencia" rows="5" class="form-control input-lg" name="textoincidencia" placeholder="Por favor, describe o problema de forma clara e concisa" required>
 <?php
    if (!empty($auxmac))
-       echo "MAC do equipo $etiqueta_equipo (deixe esto): ".htmlentities(substr($auxmac,0,17));
+       echo "$etiqueta_equipo MAC: ".htmlentities(substr($auxmac,0,17)). " (deixe esto)\n";
    else
        echo $_POST['textoincidencia'];
    ?></textarea>
