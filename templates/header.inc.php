@@ -46,6 +46,11 @@
                 echo " class=\"active\"";
             }
             echo "><a data-toggle=\"tooltip\" title=\"titulo\" href=\"?operacion=usuarios\"><span class=\"glyphicon glyphicon-education\"></span> Usuarios</a></li>";
+            echo "<li";
+            if ($BREADCRUM == "INVENTARIO") {
+                echo " class=\"active\"";
+            }
+            echo "><a data-toggle=\"tooltip\" title=\"Inventario\" href=\"?operacion=inventario\"><span class=\"glyphicon glyphicon-list-alt\"></span> Inventario</a></li>";
         }
       }
       ?>

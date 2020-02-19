@@ -56,44 +56,49 @@ $BREADCRUM=strtoupper($seccion);
 //Por seguridad
 switch ($seccion) {
     case 'login':
-    require('includes/login.php');
+        require('includes/login.php');
     break;
 
     case 'usuarios':
-    comprobar_permiso("usuarios");
-    require('includes/usuarios.php');
+        comprobar_permiso("usuarios");
+        require('includes/usuarios.php');
+    break;
+    
+    case 'inventario':
+        comprobar_permiso("inventario");
+        require('includes/inventario.php');
     break;
 
     case 'localizaciones':
-    comprobar_permiso("admin");
-    require('includes/localizaciones.php');
+        comprobar_permiso("admin");
+        require('includes/localizaciones.php');
     break;
 
     case 'incidencias':
-    comprobar_permiso("incidencias");
-    require('includes/incidencias.php');
+        comprobar_permiso("incidencias");
+        require('includes/incidencias.php');
     break;
 
     case 'webservice':
-    //TODO: Cambiar clave. Mejorar esta parte
-    $claveinventario = $configuraciones['claveinventario'];
-    if ($claveinventario == "") {
-        $claveinventario="setuppassword";
-    }
-    if ($_REQUEST['passwd'] != $claveinventario)
-	    die("403 ERROR");
-    require('includes/webservice.php');
+        // TODO: Cambiar clave. Mejorar esta parte
+        $claveinventario = $configuraciones['claveinventario'];
+        if ($claveinventario == "") {
+            $claveinventario="setuppassword";
+        }
+        if ($_REQUEST['passwd'] != $claveinventario)
+	       die("403 ERROR");
+        require('includes/webservice.php');
     break;
 
     case 'logout':
-    $BREADCRUM="";
-    require('includes/logout.php');
+        $BREADCRUM="";
+        require('includes/logout.php');
     break;
 
     default:
-    $BREADCRUM="CREARINCIDENCIA";
-    comprobar_permiso("crearincidencia");
-    require('includes/crearincidencia.php');
+        $BREADCRUM="CREARINCIDENCIA";
+        comprobar_permiso("crearincidencia");
+        require('includes/crearincidencia.php');
 }
 
 $mysqli->close();

@@ -287,6 +287,43 @@ class Computer {
     }
 }
 
+function queryRoom($idlocalizacion) {
+    $sqlQuery = "SELECT m.idordenador, m.idlocalizacion, m.etiqueta, m.boca, m.mac, m.dns, m.ip, ".
+        "m.procesador, m.ssd, m.hdd, m.ram, m.fila, m.columna, m.fuentealimentacion, m.fechaInstalacion, ".
+        "m.fechaMontaje FROM ordenador m  LEFT JOIN ordenador b ON m.mac = b.mac AND m.fechaInstalacion < b.fechaInstalacion ".
+        "WHERE b.fechaInstalacion IS NULL AND m.idlocalizacion=? ORDER BY etiqueta ASC ";
+    $sentencia = $GLOBALS['mysqli']->prepare($sqlQuery);
+    $sentencia->bind_param("i", $idlocalizacion);
+    $sentencia->execute();
+    
+    $sentencia->bind_result($idordenador, $idlocalizacion, $etiqueta, $boca, $mac, $dns, $ip,
+        $procesador, $ssd, $hdd, $ram, $fila, $columna, $fuentealimentacion, $fechaInstalacion, $fechaMontaje);
+    
+    while ($auxOrdenador= $sentencia->fetch()) {
+        $computer = new Computer();
+        $computer->setIdordenador($idordenador);
+        $computer->setIdLocalizacion($idlocalizacion);
+        $computer->setEtiqueta($etiqueta);
+        $computer->setBoca($boca);
+        $computer->setMac($mac);
+        $computer->setDns($dns);
+        $computer->setIp($ip);
+        $computer->setCpu($procesador);
+        $computer->setSsd($ssd);
+        $computer->setHdd($hdd);
+        $computer->setRam($ram);
+        $computer->setFila($fila);
+        $computer->setColumna($columna);
+        $computer->setFuentealimentacion($fuentealimentacion);
+        $computer->setFechaInstalacion($fechaInstalacion);
+        $computer->setFechaMontaje($fechaMontaje);
+        $ordenadores[]=$computer;
+    }
+    return $ordenadores;
+    
+    
+}
+
 //Devuelve la fila del ultimo ordenador instalado
 function queryComputer($mac) {
     $sqlQuery = "SELECT idordenador, idlocalizacion, etiqueta, boca, mac, dns, ip, ".

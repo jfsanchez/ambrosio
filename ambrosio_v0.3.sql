@@ -20,3 +20,5 @@ CREATE TABLE ordenador(
 );
 
 insert into configuracion(variable,valor) values('claveinventario', 'setuppassword');
+
+insert into configuracion(variable,valor) values('seccion_inventario_login', 'admin');
