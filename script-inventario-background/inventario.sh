@@ -202,10 +202,10 @@ case "$1" in
 		#Saber si ha sido instalado el equipo. SI: Mirar si hay cambios en MAC -> No instalado = regenerar imagen login
 		comprobarInstalacion
 		if [[ ${comprobarInstalacion} == "1" ]]; then
-			echo Generando pantalla de login...
-			generarFondoLogin
 			echo Instalando y registrando...
 			instalar
+			echo Generando pantalla de login...
+			generarFondoLogin
 			echo ${mac} > ${CONFIG_DIR}/${CONFIG_FILE}
 		fi
 
