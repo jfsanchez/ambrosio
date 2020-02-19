@@ -6,8 +6,8 @@
 
 <div class="container">
 
-<h2>Seleccione localización para ver inventario</h2>
-  <label for="lugar">Selecciones localización para ver o inventario de equipos:</label>
+<h2>Inventario de equipos</h2>
+  <label for="lugar">Seleccione localización para ver o inventario de equipos:</label>
   <select class="form-control" id="lugar" name="lugar" required='required'>
 <?php
     foreach($localizaciones as $clave => $valor){
