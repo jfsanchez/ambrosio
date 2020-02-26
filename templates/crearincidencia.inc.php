@@ -89,8 +89,8 @@ if ($FRACASO) {
  </div>
 </div>
 
-<div class="form-group row col-xs-10">
-<input type="submit" class="btn btn-default btn-group-lg" value="Enviar" id="enviar"/>
+<div class="form-group row col-xs-12 col-md-12">
+<input type="submit" class="btn btn-default btn-group-lg btn-block" value="Enviar" id="enviar"/>
 </div>
 
 </form>
