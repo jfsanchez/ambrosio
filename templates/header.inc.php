@@ -75,3 +75,5 @@
   </div>
 </nav>
 </div> <!--fin de la cabecera-->
+
+<div class="container-fluid">

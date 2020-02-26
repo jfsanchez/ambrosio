@@ -15,5 +15,6 @@ echo $instituto_contacto_linea2;
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 
+</div> <!-- Fin container-fluid -->
 </body>
 </html>
