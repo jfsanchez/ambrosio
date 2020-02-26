@@ -46,7 +46,7 @@ if ($FRACASO) {
 </div>
 
 <div class="form-group row">
- <div class="col-xs-12<?php if ($ERROR['lugar']) echo $ERROR_INPUT_CLASSNAME;?> col-md-4">
+ <div class="col-xs-12<?php if ($ERROR['lugar']) echo $ERROR_INPUT_CLASSNAME;?> col-md-6">
   <label for="lugar">¿Onde ocorre?</label>
   <select class="form-control" name="lugar" id="lugar" required='required'>
 <?php
@@ -60,7 +60,7 @@ if ($FRACASO) {
 ?>
   </select>
  </div>
- <div class="col-xs-12<?php if ($ERROR['grupo']) echo $ERROR_INPUT_CLASSNAME;?> col-md-4">
+ <div class="col-xs-12<?php if ($ERROR['grupo']) echo $ERROR_INPUT_CLASSNAME;?> col-md-6">
   <label for="grupo">¿Qué tipo de problema é?</label>
   <select class="form-control" name="grupo" id="grupo" required='required'>
   <?php
