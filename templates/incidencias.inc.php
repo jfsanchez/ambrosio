@@ -31,9 +31,9 @@ if (empty($idestado)){
 <table class="table table-striped" style="margin: 0 auto; width: 95%;">
 <thead>
 <tr>
-<th style="width: 15em;">Data</th>
-<th style="width: 15em;">Nome</th>
-<th style="width: 15em;">Ónde</th>
+<th style="width: 15em;">Datos</th>
+<!-- th style="width: 15em;">Nome</th-->
+<!-- th style="width: 15em;">Ónde</th-->
 <th>Mensaxe</th>
 <th style="width: 1em;">&nbsp;</th>
 </tr>
@@ -42,14 +42,15 @@ if (empty($idestado)){
 <?php
 foreach($incidencias as $incidencia){
     echo "<tr>";
-    echo "<td>".$incidencia->fechaCreacion;
+    $fechaOriginal = new DateTime($incidencia->fechaCreacion);
+    echo "<td><strong>Data:</strong> ".$fechaOriginal->format('d-m-Y H:i:s');
     for ($i=0; $i < $incidencia->urgencia; $i++){
         echo " <span class=\"glyphicon glyphicon-alert\" style=\"color: red;\"></span>";
     }
-    echo "</td>";
+    //echo "</td><td>";
     
-    echo "<td><a href=\"mailto:".$incidencia->email."\">".$incidencia->nombre."</a></td>";
-    echo "<td>".$GLOBALS['localizaciones'][$incidencia->idlocalizacion]."</td>";
+    echo "<p><strong>Autor:</strong> <a href=\"mailto:".$incidencia->email."\">".$incidencia->nombre."</a></p>";//</td>
+    echo "<p><strong>Ubicación:</strong><br/>".$GLOBALS['localizaciones'][$incidencia->idlocalizacion]."</p>";
     echo "<td>".$incidencia->mensaje;
     //Comentarios (realmente están ordenados y se podría optimizar este bucle)
     //echo var_dump($comentarios);
@@ -59,8 +60,10 @@ foreach($incidencias as $incidencia){
         if ($comentario[0]->idincidencia == $incidencia->idincidencia){
             for ($j =0; $j < count($comentario); $j++){
                 //#FDF5E6
+                $fechaOrig = new DateTime($comentario[$j]->fechaHora);
+                
                 echo "<div style=\"padding-top: 1em; margin-bottom: 2px; background-color: #FFFFF0; border: 1px #ccc solid; word-wrap: break-word; font-size: 90%;\"> ".$comentario[$j]->texto."<br/>";
-                echo "Por: <span style=\"color: #000080\"><strong>".$comentario[$j]->usuario."</strong></span>, el: <span style=\"color: #2E8B57;\"><i>".$comentario[$j]->fechaHora."</i></span>. <span style=\"color: #A0522D\">Estado: ".$comentario[$j]->estado."</span>";
+                echo "Por: <span style=\"color: #000080\"><strong>".$comentario[$j]->usuario."</strong></span>, el: <span style=\"color: #2E8B57;\"><i>".$fechaOrig->format('d-m-Y H:i:s')."</i></span>. <span style=\"color: #A0522D\">Estado: ".$comentario[$j]->estado."</span>";
                 echo "</div>";
             }
         }
