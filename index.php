@@ -13,14 +13,15 @@ $grupos = cargarGrupos();
 //TODO: Cambiar clave del usuario
 //TODO: Gestión de localizaciones
 //TODO: Gestión de grupos
+//TODO: Mejorar inventario e integrar intranet (web de bievenida: Editar datos, enlaces públicos e ¿integrar algun RSS?)
 //TODO: Gestión de reserva de horarios de aulas (idea: no permitir reservar más de X días en el futuro)
 //TODO: Gestión de préstamos de libros del departamento
 //TODO: Gestión de aviso de guardias (o ticket a conserjería)
-//TODO: Directorio web con formularios
 //TODO: Aviso aula convivencia?
 //TODO: Posibilidad de meter SMS aviso a padres y petición de informes a resto docentes
 //TODO: Petición de tutorías
-//TODO: Informes individualizados de alumnos
+//TODO: Mini gestor documental: Subir plantillas organizadas por categorías (Generales, públicos (solicitudes, programaciones, justificantes, horarios, teléfonos...), departamentos, RRHH, normas y procedimientos, etc)
+//TODO: Autogenerador de informes individualizados de alumnos lo más genérico posible (para reutilizar) con datos agrupados de todos los profesores
 
 function comprobar_permiso($auxseccion) {
     global $configuraciones;
