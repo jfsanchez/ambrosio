@@ -204,6 +204,7 @@ case "$1" in
 		if [[ ${comprobarInstalacion} == "1" ]]; then
 			echo Instalando y registrando...
 			instalar
+			nombrehost=$(hostname)
 			echo Generando pantalla de login...
 			generarFondoLogin
 			echo ${mac} > ${CONFIG_DIR}/${CONFIG_FILE}
