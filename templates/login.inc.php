@@ -9,8 +9,10 @@ if ($FRACASO) {
 <?php 
 }
 ?>
-<div class="col-md-3">&nbsp;</div>
-<div class="col-xs-12 col-md-5">
+
+<!-- <div class="col-md-3">Reservado para información login a la derecha (quitar offset)</div> -->
+
+<div class="col-xs-12 col-md-5 col-md-offset-3">
 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
 <input type="hidden" name="operacion" value="login"/>
 <input type="hidden" name="operacion2" value="1"/>
