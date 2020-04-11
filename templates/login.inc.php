@@ -9,12 +9,12 @@ if ($FRACASO) {
 <?php 
 }
 ?>
-
-<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" style="width: 80%; margin: 0 auto;">
+<div class="col-md-3">&nbsp;</div>
+<div class="col-xs-12 col-md-5">
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
 <input type="hidden" name="operacion" value="login"/>
 <input type="hidden" name="operacion2" value="1"/>
 
-<div class="form-group row">
   <label for="usuario">Usuario:</label>
   <input class="form-control" type="text" value="<?php echo $aux_usuario; ?>" 
   		name="usuario" id="usuario" placeholder="Nome de usuario" required autofocus/>
@@ -24,6 +24,5 @@ if ($FRACASO) {
 
     <input type="submit" class="btn btn-default btn-group-lg" value="Acceder" id="enviar" style="margin-top: 1em;"/>
 
-</div>
-
 </form>
+</div>
